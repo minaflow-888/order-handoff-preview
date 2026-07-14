@@ -1,0 +1,74 @@
+/* ==========================================================================
+   Mina Flow — Color tokens
+   Brand blue identity for Lead Capture case study
+   ========================================================================== */
+
+:root {
+  /* ---- Brand blue ramp ---- */
+  --brand-100: #EFF6FF;
+  --brand-200: #DBEAFE;
+  --brand-300: #93C5FD;
+  --brand-400: #60A5FA;
+  --brand-500: #3B82F6;
+  --brand-600: #2563EB;
+  --brand-700: #1D4ED8;
+  --brand-800: #1E40AF;
+  --brand-900: #1E3A8A;
+
+  /* Brand gradient, matches wordmark direction */
+  --brand-gradient: linear-gradient(115deg, var(--brand-400) 0%, var(--brand-500) 55%, var(--brand-700) 100%);
+  --brand-gradient-soft: linear-gradient(115deg, var(--brand-300) 0%, var(--brand-500) 100%);
+
+  /* ---- Neutrals: clean cool gray (no violet tint) ---- */
+  --gray-0: #FFFFFF;
+  --gray-50: #F8FAFC;
+  --gray-100: #F1F5F9;
+  --gray-200: #E2E8F0;
+  --gray-300: #CBD5E1;
+  --gray-400: #94A3B8;
+  --gray-500: #64748B;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1E293B;
+  --gray-900: #0F172A;
+  --gray-950: #020617;
+
+  /* ---- Semantic surfaces ---- */
+  --surface-page: var(--gray-0);
+  --surface-page-alt: var(--gray-50);
+  --surface-card: var(--gray-0);
+  --surface-card-alt: var(--gray-50);
+  --surface-dark: var(--gray-900);
+  --surface-dark-alt: var(--gray-950);
+  --surface-brand: var(--brand-600);
+
+  /* ---- Semantic text ---- */
+  --text-heading: var(--gray-900);
+  --text-body: var(--gray-700);
+  --text-muted: var(--gray-500);
+  --text-on-dark: var(--gray-0);
+  --text-on-dark-muted: var(--gray-300);
+  --text-on-brand: var(--gray-0);
+  --text-link: var(--brand-600);
+  --text-link-hover: var(--brand-700);
+
+  /* ---- Semantic borders ---- */
+  --border-subtle: var(--gray-200);
+  --border-default: var(--gray-300);
+  --border-on-dark: rgba(255, 255, 255, 0.12);
+  --border-brand: var(--brand-400);
+
+  /* ---- Feedback (unchanged) ---- */
+  --success-500: #2FAE6B;
+  --success-100: #E3F7EC;
+  --warning-500: #E5A536;
+  --warning-100: #FCF1DC;
+  --danger-500: #E15353;
+  --danger-100: #FBE4E4;
+
+  /* ---- Focus ring (updated to blue) ---- */
+  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.35);
+}
+
+a { color: var(--text-link); }
+a:hover { color: var(--text-link-hover); }
