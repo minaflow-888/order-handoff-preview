@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Handoff Automation — Case Study</title>
+  <meta name="description" content="A Make.com workflow that turns a HubSpot Closed Won deal into a validated, documented customer handoff with duplicate prevention, customer communication, CRM updates and error logging.">
+  <meta property="og:title" content="Order Handoff Automation — Case Study">
+  <meta property="og:description" content="A Make.com workflow that turns a HubSpot Closed Won deal into a validated, documented customer handoff with duplicate prevention, customer communication, CRM updates and error logging.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/og-preview.png">
+  <link rel="icon" href="assets/favicon.png">
+
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('order-handoff-theme');
+        document.documentElement.dataset.theme = saved === 'light' ? 'light' : 'dark';
+      } catch (error) {
+        document.documentElement.dataset.theme = 'dark';
+      }
+    }());
+  </script>
+
+  <link rel="stylesheet" href="design-system/mina-flow-design-system-a5074eb9-4d96-47b9-a97d-d1a884a274b4/styles.css">
+  <link rel="stylesheet" href="order-handoff-theme.css">
+</head>
+<body data-theme="dark">
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+  <script src="design-system/mina-flow-design-system-a5074eb9-4d96-47b9-a97d-d1a884a274b4/_ds_bundle.js"></script>
+  <script type="text/babel" src="content.jsx"></script>
+  <script type="text/babel" src="v2-shared.jsx"></script>
+  <script type="text/babel" src="v2-hero.jsx"></script>
+  <script type="text/babel" src="v2-map.jsx"></script>
+  <script type="text/babel" src="v2-flow.jsx"></script>
+  <script type="text/babel" src="v2-quality.jsx"></script>
+  <script type="text/babel" src="v2-end.jsx"></script>
+  <script type="text/babel" src="v2-app.jsx"></script>
+</body>
+</html>
