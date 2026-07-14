@@ -20,7 +20,7 @@ window.CASE_CONTENT = {
       headingBefore: "From Closed Won to a ",
       headingAccent: "validated, documented customer handoff",
       headingAfter: ".",
-      description: "I built a workflow that starts when a HubSpot deal is marked Closed Won. It checks the associated contact and email, prevents duplicate sends, sends a customer welcome email, updates the deal, records the result and sends an internal handoff email.",
+      description: "I built a workflow that starts when a HubSpot deal is marked Closed Won. It checks the associated contact and email, looks for previous processing to avoid a repeat send, sends a customer welcome email, updates the deal, records the result and sends an internal handoff email.",
       workflowButton: "View the workflow",
       portfolioButton: "Back to Portfolio",
       previewLabel: "Order Handoff workflow preview",
@@ -36,7 +36,7 @@ window.CASE_CONTENT = {
     snapshot: [
       { icon: "flask-conical", label: "Project type", value: "Functional portfolio demonstration" },
       { icon: "git-branch", label: "Workflow structure", value: "One Make.com scenario with decision and error routes" },
-      { icon: "shield-check", label: "Main differentiator", value: "Validation and duplicate prevention before customer communication" },
+      { icon: "shield-check", label: "Main differentiator", value: "Validation and duplicate checks before customer communication" },
       { icon: "layers", label: "Tools", value: "HubSpot, Make.com, Google Sheets and Brevo" }
     ],
     problem: {
@@ -55,7 +55,7 @@ window.CASE_CONTENT = {
     map: {
       eyebrow: "System map",
       title: "One handoff, with checks before every important action",
-      lede: "The workflow retrieves the deal and its associations, checks contact data, searches the log for previous processing and then runs the customer handoff only on the safe path. Missing data and failed actions are written to clear logs.",
+      lede: "The workflow retrieves the deal and its associations, checks the contact data and searches the log for previous processing. It continues only when the required contact data is present and the deal has not already been recorded as sent. Missing data and failed actions are written to clear logs.",
       hubTitle: "Order Handoff Automation",
       hubMeta: "1 MAKE.COM SCENARIO + ERROR ROUTES",
       invalidLabel: "missing, duplicate or failed → logged / stopped",
@@ -166,11 +166,11 @@ window.CASE_CONTENT = {
     },
     quality: {
       eyebrow: "Why handoff checks matter",
-      title: "A Closed Won status does not guarantee a ready customer handoff.",
-      lede: "The workflow separates a completed sale from a handoff that is safe to send and easy to trace.",
+      title: "Marking a deal Closed Won does not mean the customer handoff is ready.",
+      lede: "The workflow separates a completed sale from a handoff that is ready to continue and easy to trace.",
       flow: ["Closed Won deal", "Validate & deduplicate", "Send once & record"],
-      incompleteTitle: "Unsafe handoff",
-      readyTitle: "Ready handoff",
+      incompleteTitle: "Not ready to send",
+      readyTitle: "Ready to continue",
       incomplete: [
         "No associated contact is available",
         "The contact has no email address",
@@ -192,7 +192,7 @@ window.CASE_CONTENT = {
         { icon: "circle-play", label: "Closed Won trigger" },
         { icon: "database", label: "Deal and association retrieval" },
         { icon: "badge-check", label: "Contact and email checks" },
-        { icon: "copy-check", label: "Duplicate prevention" },
+        { icon: "copy-check", label: "Duplicate check" },
         { icon: "mail-check", label: "Customer welcome email" },
         { icon: "refresh-cw", label: "HubSpot deal update" },
         { icon: "clipboard-list", label: "Success and error logging" },
@@ -241,9 +241,9 @@ window.CASE_CONTENT = {
     },
     planned: {
       eyebrow: "What’s next for this project",
-      title: "Making the handoff more durable and easier to operate",
+      title: "Making the handoff more reliable and easier to manage",
       badge: "PLANNED IMPROVEMENTS — NOT IMPLEMENTED",
-      description: "The current version validates, prevents duplicate sends, communicates with the customer, updates HubSpot and records outcomes. A future version could strengthen recovery, ownership and monitoring.",
+      description: "The current version validates contact data, checks for previous processing, communicates with the customer, updates HubSpot and records the outcome. A future version could strengthen recovery, ownership and monitoring.",
       items: [
         "Use a CRM property or structured database as a stronger processed-deal record",
         "Add an automatic retry and error queue for failed API or email actions",
@@ -253,12 +253,12 @@ window.CASE_CONTENT = {
         "Add monitoring for delayed or incomplete handoffs",
         "Review privacy, access and data-retention rules before production use"
       ],
-      goal: "The goal is not to remove human ownership, but to make every won deal easier to hand over without hiding exceptions.",
+      goal: "The goal is not to remove human ownership, but to make every won deal easier to hand over while keeping problems visible to the team.",
       note: "These are planned future improvements and are not part of the current implemented version."
     },
     learned: {
       eyebrow: "What I learned",
-      quote: "I learned how to use HubSpot associations, routers and filters to protect a customer handoff before any message is sent.",
+      quote: "I learned how to use HubSpot associations, routers and filters to check the handoff conditions before any message is sent.",
       paragraph: "I also learned how a deal ID can support duplicate prevention, how success and failure routes create a clearer audit trail, and why customer and internal communication should be treated as separate actions.",
       transparencyTitle: "Project transparency",
       transparency1: "This is a functional portfolio demonstration built and tested with demonstration records. It was not developed for a live client environment.",
@@ -303,7 +303,7 @@ window.CASE_CONTENT = {
       headingBefore: "Från Closed Won till en ",
       headingAccent: "validerad och dokumenterad kundöverlämning",
       headingAfter: ".",
-      description: "Jag byggde ett arbetsflöde som startar när en HubSpot-affär markeras som Closed Won. Det kontrollerar kopplad kontakt och e-post, förhindrar dubbelutskick, skickar ett välkomstmejl till kunden, uppdaterar affären, loggar resultatet och skickar ett internt överlämningsmejl.",
+      description: "Jag byggde ett arbetsflöde som startar när en HubSpot-affär markeras som Closed Won. Det kontrollerar den kopplade kontakten och e-postadressen, ser om affären redan har behandlats för att undvika dubbelutskick, skickar ett välkomstmejl till kunden, uppdaterar affären, loggar resultatet och skickar ett internt överlämningsmejl.",
       workflowButton: "Visa arbetsflödet",
       portfolioButton: "Tillbaka till portföljen",
       previewLabel: "Förhandsvisning av Order Handoff-arbetsflödet",
@@ -319,7 +319,7 @@ window.CASE_CONTENT = {
     snapshot: [
       { icon: "flask-conical", label: "Projekttyp", value: "Funktionell portföljdemonstration" },
       { icon: "git-branch", label: "Struktur", value: "Ett Make.com-scenario med beslutspunkter och felvägar" },
-      { icon: "shield-check", label: "Viktigaste skillnad", value: "Validering och dubblettkontroll före kundkommunikation" },
+      { icon: "shield-check", label: "Viktigaste styrka", value: "Validering och dubblettkontroll före kundkommunikation" },
       { icon: "layers", label: "Verktyg", value: "HubSpot, Make.com, Google Sheets och Brevo" }
     ],
     problem: {
@@ -387,7 +387,7 @@ window.CASE_CONTENT = {
         },
         {
           tag: "STEG 3",
-          title: "Förhindra dubbel behandling",
+          title: "Förhindra att samma affär behandlas två gånger",
           icon: "copy-check",
           hot: true,
           steps: [
@@ -449,15 +449,15 @@ window.CASE_CONTENT = {
     },
     quality: {
       eyebrow: "Varför överlämningskontroller är viktiga",
-      title: "Statusen Closed Won betyder inte automatiskt att kundöverlämningen är redo.",
-      lede: "Arbetsflödet skiljer en avslutad försäljning från en överlämning som är säker att skicka och enkel att följa.",
+      title: "Att en affär är markerad som Closed Won betyder inte att kundöverlämningen är redo.",
+      lede: "Arbetsflödet skiljer en avslutad försäljning från en överlämning som är redo att fortsätta och enkel att följa.",
       flow: ["Closed Won-affär", "Validera & kontrollera dubblett", "Skicka en gång & logga"],
-      incompleteTitle: "Osäker överlämning",
-      readyTitle: "Redo för överlämning",
+      incompleteTitle: "Inte redo att skicka",
+      readyTitle: "Redo att fortsätta",
       incomplete: [
         "Det finns ingen kopplad kontakt",
         "Kontakten saknar e-postadress",
-        "Samma affärs-ID finns redan i skickat-loggen",
+        "Samma affärs-ID finns redan i loggen över skickade mejl",
         "Ett misslyckat mejl eller en CRM-uppdatering skulle vara osynligt utan fellogg"
       ],
       ready: [
@@ -488,7 +488,7 @@ window.CASE_CONTENT = {
       tools: [
         { label: "HubSpot", icon: "circle-dot", color: "#FF7A59", description: "Ger Closed Won-starten, affärsdata, kontaktkopplingar och den slutliga CRM-uppdateringen." },
         { label: "Make.com", icon: "workflow", color: "#8B5CF6", description: "Kopplar samman kontroller, routers, åtgärder och felvägar i ett scenario." },
-        { label: "Google Sheets", icon: "table-2", color: "#34A853", description: "Lagrar den enkla dubblettkontrollen, skickat-loggen och felloggarna i demonstrationen." },
+        { label: "Google Sheets", icon: "table-2", color: "#34A853", description: "Lagrar underlaget för dubblettkontrollen, loggen över skickade mejl och felloggarna i demonstrationen." },
         { label: "Brevo", icon: "send", color: "#0B996E", description: "Skickar kundens välkomstmejl och det interna överlämningsmejlet." }
       ]
     },
@@ -511,7 +511,7 @@ window.CASE_CONTENT = {
       testingText: "Huvudmodulerna, routinglogiken och dubblettkontrollen testades med demonstrationsposter. Scenariot innehåller felloggarna som visas i skärmbilden och driftsattes inte i en verklig kundmiljö."
     },
     limitations: {
-      eyebrow: "Ärligt utformat",
+      eyebrow: "Tydliga begränsningar",
       title: "Nuvarande begränsningar",
       items: [
         "Google Sheets används som en enkel demonstrationslogg och lagring för dubblettkontroll, inte som en transaktionssäker produktionsdatabas.",
@@ -526,7 +526,7 @@ window.CASE_CONTENT = {
       eyebrow: "Nästa steg för projektet",
       title: "Göra överlämningen mer robust och enklare att hantera",
       badge: "PLANERADE FÖRBÄTTRINGAR — INTE IMPLEMENTERADE",
-      description: "Den nuvarande versionen validerar, förhindrar dubbelutskick, kommunicerar med kunden, uppdaterar HubSpot och loggar resultat. En framtida version kan stärka återställning, ansvar och övervakning.",
+      description: "Den nuvarande versionen validerar kontaktuppgifter, kontrollerar om affären redan har behandlats, kommunicerar med kunden, uppdaterar HubSpot och loggar resultatet. En framtida version kan stärka återställning, ansvar och övervakning.",
       items: [
         "Använd en CRM-egenskap eller strukturerad databas som en säkrare post över behandlade affärer",
         "Lägg till automatiska återförsök och en felkö för misslyckade API- eller mejlåtgärder",
@@ -536,12 +536,12 @@ window.CASE_CONTENT = {
         "Lägg till övervakning av försenade eller ofullständiga överlämningar",
         "Granska integritet, åtkomst och datalagring före produktionsanvändning"
       ],
-      goal: "Målet är inte att ta bort mänskligt ansvar, utan att göra varje vunnen affär enklare att lämna över utan att dölja undantag.",
+      goal: "Målet är inte att ta bort mänskligt ansvar, utan att göra varje vunnen affär enklare att lämna över samtidigt som problem förblir synliga för teamet.",
       note: "Detta är planerade framtida förbättringar och ingår inte i den nuvarande implementerade versionen."
     },
     learned: {
       eyebrow: "Vad jag lärde mig",
-      quote: "Jag lärde mig att använda HubSpot-kopplingar, routers och filter för att skydda kundöverlämningen innan något meddelande skickas.",
+      quote: "Jag lärde mig att använda HubSpot-kopplingar, routers och filter för att kontrollera förutsättningarna för kundöverlämningen innan något meddelande skickas.",
       paragraph: "Jag lärde mig också hur ett affärs-ID kan användas för dubblettkontroll, hur resultat- och felvägar skapar ett tydligare revisionsspår och varför kundkommunikation och intern kommunikation bör behandlas som separata åtgärder.",
       transparencyTitle: "Projekttransparens",
       transparency1: "Detta är en funktionell portföljdemonstration som byggdes och testades med demonstrationsposter. Den utvecklades inte för en verklig kundmiljö.",
@@ -558,7 +558,7 @@ window.CASE_CONTENT = {
     cta: {
       eyebrow: "Låt oss prata",
       title: "Söker ni någon som kan kartlägga, bygga och tydligt dokumentera praktiska arbetsflöden?",
-      description: "Jag söker en praktikplats, arbetspraktik eller juniorroll i Malmö eller Skåne där jag kan fortsätta lära mig och samtidigt bidra med praktiskt automationsarbete.",
+      description: "Jag söker en praktikplats, arbetspraktik eller juniorroll i Malmö eller Skåne där jag kan fortsätta lära mig och samtidigt bidra med praktiskt arbete med automation.",
       portfolio: "Tillbaka till portföljen",
       lead: "Visa Lead Capture-fallstudien"
     },
