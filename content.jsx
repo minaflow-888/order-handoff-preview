@@ -20,42 +20,42 @@ window.CASE_CONTENT = {
       headingBefore: "From Closed Won to a ",
       headingAccent: "validated, documented customer handoff",
       headingAfter: ".",
-      description: "I built a workflow that starts when a HubSpot deal is marked Closed Won. It checks the associated contact and email, looks for previous processing to avoid a repeat send, sends a customer welcome email, updates the deal, records the result and sends an internal handoff email.",
+      description: "I built a Make.com scenario that triggers when a HubSpot deal enters Closed Won. It retrieves the deal and associated contact using HubSpot associations, validates the contact and email with two routers, checks the deal ID against a Google Sheets log to prevent duplicate sends, sends a Brevo welcome email, updates HubSpot and logs every outcome — including failures.",
       workflowButton: "View the workflow",
       portfolioButton: "Back to Portfolio",
       previewLabel: "Order Handoff workflow preview",
       nodes: [
         { label: "Trigger", detail: "HubSpot deal becomes Closed Won", icon: "circle-play" },
-        { label: "Retrieve", detail: "Deal, associations and contact", icon: "database" },
-        { label: "Validate", detail: "Contact and email checked", icon: "badge-check", hot: true },
-        { label: "Deduplicate", detail: "Deal ID checked before sending", icon: "copy-check", hot: true },
-        { label: "Welcome", detail: "Customer email and CRM update", icon: "mail-check" },
-        { label: "Record", detail: "Success, errors and internal email", icon: "clipboard-list" }
+        { label: "Retrieve", detail: "Get Deal + List Associations", icon: "database" },
+        { label: "Validate", detail: "Contact and email routers", icon: "badge-check", hot: true },
+        { label: "Deduplicate", detail: "Deal ID checked in Sheets log", icon: "copy-check", hot: true },
+        { label: "Welcome", detail: "Brevo email + HubSpot update", icon: "mail-check" },
+        { label: "Record", detail: "Success log + internal email + error logs", icon: "clipboard-list" }
       ]
     },
     snapshot: [
       { icon: "flask-conical", label: "Project type", value: "Functional portfolio demonstration" },
       { icon: "git-branch", label: "Workflow structure", value: "One Make.com scenario with decision and error routes" },
-      { icon: "shield-check", label: "Main differentiator", value: "Validation and duplicate checks before customer communication" },
+      { icon: "shield-check", label: "Main differentiator", value: "Validation and duplicate check before customer communication" },
       { icon: "layers", label: "Tools", value: "HubSpot, Make.com, Google Sheets and Brevo" }
     ],
     problem: {
       eyebrow: "The business problem",
       title: "Closing the deal is only the start of a clean customer handoff.",
       paragraphs: [
-        "A salesperson can mark a deal Closed Won, but the customer handoff still depends on several follow-up steps: finding the right contact, checking the email address, sending the welcome message, updating the CRM, recording the outcome and informing the internal team.",
-        "When those steps are handled manually, missing data, duplicate messages and unclear handoff status can appear at the exact moment when the customer expects a smooth start."
+        "A salesperson marks a deal Closed Won, but the customer handoff still requires several steps that happen outside the CRM: confirming the right contact exists, checking that an email address is available, sending the welcome message, updating the deal status, logging the outcome and notifying the internal team. When those steps are manual, they are easy to miss.",
+        "Missing contact data, duplicate welcome emails and invisible failures are the three most common problems. This workflow makes all three visible before any message reaches the customer."
       ],
       cards: [
-        { icon: "user-x", title: "Missing handoff data", description: "A won deal may have no associated contact, or the contact may not have an email address ready for customer communication." },
-        { icon: "copy-x", title: "Duplicate customer communication", description: "Without a previous-processing check, the same deal can trigger the welcome email more than once." },
-        { icon: "clipboard-x", title: "No visible completion record", description: "If the email, CRM update or internal handoff fails, the team needs a clear record of what happened and where the process stopped." }
+        { icon: "user-x", title: "Missing handoff data", description: "A Closed Won deal may have no linked contact, or the contact may exist in HubSpot without an email address. Without a check, the workflow fails silently." },
+        { icon: "copy-x", title: "Duplicate customer emails", description: "Without a deal ID check, the same welcome email can be sent more than once — for example if a webhook fires twice or a scenario reruns." },
+        { icon: "clipboard-x", title: "Invisible failures", description: "If the Brevo send, HubSpot update or internal email fails, the team has no way to know unless the failure is explicitly logged." }
       ]
     },
     map: {
       eyebrow: "System map",
       title: "One handoff, with checks before every important action",
-      lede: "The workflow retrieves the deal and its associations, checks the contact data and searches the log for previous processing. It continues only when the required contact data is present and the deal has not already been recorded as sent. Missing data and failed actions are written to clear logs.",
+      lede: "The workflow retrieves the deal and its HubSpot associations, validates the contact and email with two separate routers, checks the deal ID in the Google Sheets log, then sends the welcome email and logs every outcome. Nothing reaches the customer unless all three checks pass.",
       hubTitle: "Order Handoff Automation",
       hubMeta: "1 MAKE.COM SCENARIO + ERROR ROUTES",
       invalidLabel: "missing, duplicate or failed → logged / stopped",
@@ -71,7 +71,7 @@ window.CASE_CONTENT = {
     workflow: {
       eyebrow: "Connected workflow",
       title: "One continuous handoff, six controlled stages",
-      lede: "The scenario moves from a Closed Won trigger to customer and internal communication, but only after the deal, contact and duplicate checks are complete.",
+      lede: "Every stage either confirms the handoff can continue or writes a log entry explaining why it stopped. Nothing reaches the customer unless the contact check, email check and duplicate check have all passed.",
       differentiator: "control point",
       stages: [
         {
@@ -79,9 +79,9 @@ window.CASE_CONTENT = {
           title: "Detect and load the won deal",
           icon: "circle-play",
           steps: [
-            "Watches HubSpot for a deal that enters the Closed Won stage",
-            "Retrieves the deal details",
-            "Lists the deal associations so the connected contact can be found"
+            "Watch CRM Objects detects a deal entering Closed Won — this is the only trigger",
+            "Get Deal retrieves the full deal properties — the Watch module alone does not return enough data",
+            "List Associations finds the linked contact ID — deals and contacts are separate objects in HubSpot"
           ]
         },
         {
@@ -90,16 +90,16 @@ window.CASE_CONTENT = {
           icon: "badge-check",
           hot: true,
           steps: [
-            "Checks whether the deal has an associated contact",
-            "Retrieves the contact details",
-            "Checks whether the contact has an email address",
-            "Writes Missing Contact, Missing Email or Contact Fetch Failed to Google Sheets when needed"
+            "Router checks whether an associated contact exists — a Closed Won deal can have no linked contact",
+            "Get Contact retrieves the contact details using the association ID",
+            "Second router checks whether the contact has an email address — a contact can exist in HubSpot without one",
+            "Missing Contact, Missing Email or Contact Fetch Failed is written to Google Sheets if any check fails"
           ],
           branch: {
             successTitle: "Contact ready",
-            successText: "The workflow can continue to the duplicate check.",
+            successText: "Both checks passed. The workflow continues to the duplicate check.",
             warningTitle: "Contact not ready",
-            warningText: "The reason is logged and customer communication stops."
+            warningText: "The failure reason is logged and customer communication stops here."
           }
         },
         {
@@ -108,15 +108,15 @@ window.CASE_CONTENT = {
           icon: "copy-check",
           hot: true,
           steps: [
-            "Searches Google Sheets for the HubSpot deal ID",
-            "Checks whether the deal was already recorded as sent",
-            "Allows only a new, unprocessed deal to continue"
+            "Search Rows looks for the HubSpot deal ID in the Google Sheets sent log",
+            "If the deal ID is already there, the scenario routes to the Already Sent branch and stops",
+            "Only a deal ID that is not in the log continues to the customer email"
           ],
           branch: {
             successTitle: "New handoff",
-            successText: "The customer welcome email can be sent.",
+            successText: "Deal ID not found in the log. The customer welcome email can be sent.",
             warningTitle: "Already processed",
-            warningText: "The duplicate route stops before another customer email is sent."
+            warningText: "Deal ID already in the log. No second email is sent."
           }
         },
         {
@@ -124,8 +124,8 @@ window.CASE_CONTENT = {
           title: "Send the customer welcome email",
           icon: "mail-check",
           steps: [
-            "Sends the customer email through Brevo",
-            "Writes Customer Email Failed to the error log if the action fails"
+            "Brevo sends the customer welcome email",
+            "If Brevo fails, Customer Email Failed is written to the error log — the next stages do not run"
           ]
         },
         {
@@ -133,9 +133,9 @@ window.CASE_CONTENT = {
           title: "Update HubSpot and record success",
           icon: "refresh-cw",
           steps: [
-            "Updates the HubSpot deal after the customer communication step",
-            "Writes HubSpot Update Failed if the CRM update fails",
-            "Adds an Email Sent record to Google Sheets for the completed handoff"
+            "HubSpot Update Deal marks the deal as handed off in the CRM",
+            "If the update fails, HubSpot Update Failed is logged",
+            "Google Sheets receives an Email Sent row — this is the record that the duplicate check reads next time"
           ]
         },
         {
@@ -143,8 +143,8 @@ window.CASE_CONTENT = {
           title: "Send the internal handoff email",
           icon: "users",
           steps: [
-            "Sends an internal email through Brevo so the team knows the customer handoff was completed",
-            "Writes Internal Email Failed to the error log if that final notification fails"
+            "Brevo sends an internal email so the team knows the customer handoff completed",
+            "If it fails, Internal Email Failed is written to the error log"
           ]
         }
       ]
@@ -167,23 +167,23 @@ window.CASE_CONTENT = {
     quality: {
       eyebrow: "Why handoff checks matter",
       title: "Marking a deal Closed Won does not mean the customer handoff is ready.",
-      lede: "The workflow separates a completed sale from a handoff that is ready to continue and easy to trace.",
+      lede: "The workflow separates a completed sale from a handoff that is safe to execute. Three checks must pass before anything reaches the customer.",
       flow: ["Closed Won deal", "Validate & deduplicate", "Send once & record"],
-      incompleteTitle: "Not ready to send",
+      incompleteTitle: "Not ready to send — stops here",
       readyTitle: "Ready to continue",
       incomplete: [
-        "No associated contact is available",
-        "The contact has no email address",
-        "The same deal ID is already present in the sent log",
-        "A failed email or CRM update would be invisible without an error record"
+        "No associated contact in HubSpot",
+        "Contact exists but has no email address",
+        "Deal ID already present in the sent log",
+        "A failed Brevo send or HubSpot update is invisible without an error log"
       ],
       ready: [
-        "The associated contact is found",
-        "The email field is present",
-        "No previous sent record exists for the same deal ID",
-        "Customer and internal actions can be recorded clearly"
+        "Associated contact found",
+        "Contact has an email address",
+        "Deal ID not found in the sent log",
+        "Customer and internal actions are both logged clearly"
       ],
-      clarification: "Duplicate prevention is based on the HubSpot deal ID stored in Google Sheets. It is a useful safeguard for this demonstration, but it cannot guarantee that every possible production duplicate is prevented."
+      clarification: "Duplicate prevention is based on the HubSpot deal ID stored in Google Sheets. It prevents repeated sends in normal operation, but cannot cover every edge case in production — for example if the log write fails after the email sends."
     },
     capabilities: {
       eyebrow: "Core capabilities",
@@ -191,9 +191,9 @@ window.CASE_CONTENT = {
       items: [
         { icon: "circle-play", label: "Closed Won trigger" },
         { icon: "database", label: "Deal and association retrieval" },
-        { icon: "badge-check", label: "Contact and email checks" },
-        { icon: "copy-check", label: "Duplicate check" },
-        { icon: "mail-check", label: "Customer welcome email" },
+        { icon: "badge-check", label: "Contact and email validation" },
+        { icon: "copy-check", label: "Deal ID duplicate check" },
+        { icon: "mail-check", label: "Customer welcome email via Brevo" },
         { icon: "refresh-cw", label: "HubSpot deal update" },
         { icon: "clipboard-list", label: "Success and error logging" },
         { icon: "users", label: "Internal handoff email" }
@@ -203,16 +203,16 @@ window.CASE_CONTENT = {
       eyebrow: "Technology stack",
       title: "Four tools with four clear responsibilities",
       tools: [
-        { label: "HubSpot", icon: "circle-dot", color: "#FF7A59", description: "Provides the Closed Won trigger, deal data, contact associations and the final CRM update." },
-        { label: "Make.com", icon: "workflow", color: "#8B5CF6", description: "Connects the checks, routers, actions and error routes in one scenario." },
-        { label: "Google Sheets", icon: "table-2", color: "#34A853", description: "Stores the simple duplicate check, sent record and failure logs for the demonstration." },
-        { label: "Brevo", icon: "send", color: "#0B996E", description: "Sends the customer welcome email and the internal handoff email." }
+        { label: "HubSpot", icon: "circle-dot", color: "#FF7A59", description: "Provides the Closed Won trigger, deal properties, contact associations and receives the final CRM update." },
+        { label: "Make.com", icon: "workflow", color: "#8B5CF6", description: "Controls the routers, filters, actions and error routes across the full scenario." },
+        { label: "Google Sheets", icon: "table-2", color: "#34A853", description: "Stores the sent log for the duplicate check and all error and success records." },
+        { label: "Brevo", icon: "send", color: "#0B996E", description: "Sends the customer welcome email and the internal handoff notification." }
       ]
     },
     states: {
       eyebrow: "Workflow stages & testing",
       title: "The handoff follows a visible, controlled lifecycle",
-      lede: "These are explanatory workflow stages — not stored database statuses — showing where the scenario can continue, stop or write a log.",
+      lede: "These are the stages a deal moves through — not stored database statuses. Every stopping point writes a log so the team can see exactly what happened.",
       stages: [
         { label: "Closed Won" },
         { label: "deal loaded" },
@@ -225,55 +225,55 @@ window.CASE_CONTENT = {
       ],
       final: "final outcome",
       testingTitle: "Testing status",
-      testingText: "The main modules, routing logic and duplicate check were tested with demonstration records. The scenario includes the error-log routes shown in the screenshot and was not deployed in a live client environment."
+      testingText: "The main modules, both routers, the duplicate check and the error-log routes were tested with demonstration records. The scenario was not deployed in a live client environment."
     },
     limitations: {
       eyebrow: "Honest by design",
       title: "Current limitations",
       items: [
-        "Google Sheets is used as a simple demonstration log and duplicate-check store, not as a transactional production database.",
-        "Duplicate protection depends on the previous sent record being written successfully; a failure between sending and logging could still create ambiguity.",
-        "The contact check confirms that an email field exists but does not verify deliverability or ownership of the address.",
-        "The error routes record failures but do not automatically retry or repair the failed action.",
-        "The current version does not create an onboarding task or adapt the handoff by deal type, service or owner.",
-        "The workflow was not tested in a live client environment."
+        "Google Sheets is used as a simple log and duplicate-check store, not a transactional production database.",
+        "If the Email Sent log write fails after Brevo sends, the duplicate check will not catch a second send — the same deal could be processed again.",
+        "The contact check confirms an email field exists but does not verify that the address is deliverable or belongs to the right person.",
+        "Error routes log failures but do not retry or repair the failed action automatically.",
+        "The current version does not create an onboarding task or adapt the handoff message by deal type, service or responsible owner.",
+        "The workflow was tested with demonstration records, not in a live client environment."
       ]
     },
     planned: {
-      eyebrow: "What’s next for this project",
+      eyebrow: "What's next for this project",
       title: "Making the handoff more reliable and easier to manage",
       badge: "PLANNED IMPROVEMENTS — NOT IMPLEMENTED",
-      description: "The current version validates contact data, checks for previous processing, communicates with the customer, updates HubSpot and records the outcome. A future version could strengthen recovery, ownership and monitoring.",
+      description: "The current version validates, deduplicates, communicates and logs. A future version could make recovery automatic and ownership clearer.",
       items: [
-        "Use a CRM property or structured database as a stronger processed-deal record",
-        "Add an automatic retry and error queue for failed API or email actions",
-        "Notify the responsible owner when a handoff fails",
-        "Create an onboarding task or ticket after the successful handoff",
-        "Use different email templates and internal routes by service or deal type",
+        "Use a HubSpot deal property or structured database as a stronger processed-deal record",
+        "Add automatic retry and an error queue for failed Brevo or HubSpot actions",
+        "Notify the deal owner when a handoff fails rather than only writing a log",
+        "Create an onboarding task or ticket automatically after a successful handoff",
+        "Use different email templates by service type, deal size or responsible team",
         "Add monitoring for delayed or incomplete handoffs",
-        "Review privacy, access and data-retention rules before production use"
+        "Review privacy, data retention and access rules before production use"
       ],
-      goal: "The goal is not to remove human ownership, but to make every won deal easier to hand over while keeping problems visible to the team.",
+      goal: "The goal is not to remove human ownership from the handoff. It is to make every won deal traceable from Closed Won to confirmed customer communication — with every failure visible to the team.",
       note: "These are planned future improvements and are not part of the current implemented version."
     },
     learned: {
       eyebrow: "What I learned",
-      quote: "I learned how to use HubSpot associations, routers and filters to check the handoff conditions before any message is sent.",
-      paragraph: "I also learned how a deal ID can support duplicate prevention, how success and failure routes create a clearer audit trail, and why customer and internal communication should be treated as separate actions.",
+      quote: "I learned how HubSpot associations work — that deals and contacts are separate objects and that you need List Associations and Get Contact as two distinct steps, not one. I also learned how to use routers and a deal ID log to check handoff conditions before any message leaves the system.",
+      paragraph: "Building the error routes taught me something I did not expect: logging a failure is not the same as handling it. A log tells you something went wrong. A retry route or an owner notification actually does something about it. That is the difference between the current version and a production-ready one.",
       transparencyTitle: "Project transparency",
       transparency1: "This is a functional portfolio demonstration built and tested with demonstration records. It was not developed for a live client environment.",
-      transparency2: "The project demonstrates workflow logic, validation, duplicate prevention, CRM updates, communication and error logging. It does not provide measured client results."
+      transparency2: "The project demonstrates workflow logic, CRM integration, validation, duplicate prevention, communication and error logging. It does not include measured client results."
     },
     related: {
       eyebrow: "More case studies",
       title: "Related work",
       projects: [
         { tag: "Case study 01", title: "Lead Capture Automation", description: "Turns a website enquiry into a validated, logged lead with a team notification and automatic confirmation reply.", action: "View case study", urlKey: "lead" },
-        { tag: "Case study 03", title: "AI Research Agent", description: "Turns repeated company research into a checked, structured report through three connected scenarios.", action: "Explore project", urlKey: "research" }
+        { tag: "Case study 03", title: "AI Research Agent", description: "Turns repeated company research into a quality-checked, structured report through three connected Make.com scenarios.", action: "Explore project", urlKey: "research" }
       ]
     },
     cta: {
-      eyebrow: "Let’s talk",
+      eyebrow: "Let's talk",
       title: "Looking for someone who can map, build and clearly document practical workflows?",
       description: "I am looking for an internship, practice placement or junior opportunity in Malmö or Skåne where I can continue learning while contributing practical automation work.",
       portfolio: "Back to Portfolio",
@@ -303,17 +303,17 @@ window.CASE_CONTENT = {
       headingBefore: "Från Closed Won till en ",
       headingAccent: "validerad och dokumenterad kundöverlämning",
       headingAfter: ".",
-      description: "Jag byggde ett arbetsflöde som startar när en HubSpot-affär markeras som Closed Won. Det kontrollerar den kopplade kontakten och e-postadressen, ser om affären redan har behandlats för att undvika dubbelutskick, skickar ett välkomstmejl till kunden, uppdaterar affären, loggar resultatet och skickar ett internt överlämningsmejl.",
+      description: "Jag byggde ett Make.com-scenario som startar när en HubSpot-affär går in i Closed Won. Det hämtar affären och den kopplade kontakten via HubSpot-associationer, validerar kontakt och e-post med två routrar, kontrollerar affärens ID mot en Google Sheets-logg för att förhindra dubbelutskick, skickar ett välkomstmejl via Brevo, uppdaterar HubSpot och loggar varje utfall — inklusive misslyckanden.",
       workflowButton: "Visa arbetsflödet",
       portfolioButton: "Tillbaka till portföljen",
       previewLabel: "Förhandsvisning av Order Handoff-arbetsflödet",
       nodes: [
         { label: "Start", detail: "HubSpot-affär blir Closed Won", icon: "circle-play" },
-        { label: "Hämta", detail: "Affär, kopplingar och kontakt", icon: "database" },
-        { label: "Validera", detail: "Kontakt och e-post kontrolleras", icon: "badge-check", hot: true },
-        { label: "Dubblettkontroll", detail: "Affärs-ID kontrolleras före utskick", icon: "copy-check", hot: true },
-        { label: "Välkomstmejl", detail: "Kundmejl och CRM-uppdatering", icon: "mail-check" },
-        { label: "Dokumentera", detail: "Resultat, fel och internt mejl", icon: "clipboard-list" }
+        { label: "Hämta", detail: "Get Deal + List Associations", icon: "database" },
+        { label: "Validera", detail: "Kontakt- och e-postroutrar", icon: "badge-check", hot: true },
+        { label: "Dubblettkontroll", detail: "Affärs-ID kontrolleras i Sheets-logg", icon: "copy-check", hot: true },
+        { label: "Välkomstmejl", detail: "Brevo-mejl + HubSpot-uppdatering", icon: "mail-check" },
+        { label: "Dokumentera", detail: "Resultatlogg + internt mejl + felloggar", icon: "clipboard-list" }
       ]
     },
     snapshot: [
@@ -326,19 +326,19 @@ window.CASE_CONTENT = {
       eyebrow: "Affärsproblemet",
       title: "En avslutad affär är bara början på en bra kundöverlämning.",
       paragraphs: [
-        "En säljare kan markera en affär som Closed Won, men kundöverlämningen kräver fortfarande flera uppföljningssteg: hitta rätt kontakt, kontrollera e-postadressen, skicka välkomstmeddelandet, uppdatera CRM-systemet, logga resultatet och informera det interna teamet.",
-        "När dessa steg hanteras manuellt kan saknade uppgifter, dubbelutskick och otydlig överlämningsstatus uppstå precis när kunden förväntar sig en smidig start."
+        "En säljare markerar en affär som Closed Won, men kundöverlämningen kräver fortfarande flera steg utanför CRM-systemet: bekräfta att rätt kontakt finns, kontrollera att en e-postadress är tillgänglig, skicka välkomstmeddelandet, uppdatera affärens status, logga utfallet och informera det interna teamet. När dessa steg hanteras manuellt är de lätta att missa.",
+        "Saknade kontaktuppgifter, dubblerade välkomstmejl och osynliga misslyckanden är de tre vanligaste problemen. Det här arbetsflödet gör alla tre synliga innan något meddelande når kunden."
       ],
       cards: [
-        { icon: "user-x", title: "Saknade kontaktuppgifter", description: "En vunnen affär kan sakna kopplad kontakt, eller så saknar kontakten en e-postadress för kundkommunikation." },
-        { icon: "copy-x", title: "Dubbel kundkommunikation", description: "Utan kontroll av tidigare behandling kan samma affär utlösa välkomstmejlet mer än en gång." },
-        { icon: "clipboard-x", title: "Ingen tydlig slutstatus", description: "Om mejlet, CRM-uppdateringen eller den interna överlämningen misslyckas behöver teamet se vad som hände och var processen stoppades." }
+        { icon: "user-x", title: "Saknade överlämningsuppgifter", description: "En Closed Won-affär kan sakna kopplad kontakt, eller kontakten kan finnas i HubSpot utan e-postadress. Utan kontroll misslyckas arbetsflödet tyst." },
+        { icon: "copy-x", title: "Dubbla kundmejl", description: "Utan kontroll av affärens ID kan samma välkomstmejl skickas mer än en gång — till exempel om en webhook aktiveras två gånger eller ett scenario körs om." },
+        { icon: "clipboard-x", title: "Osynliga misslyckanden", description: "Om Brevo-utskicket, HubSpot-uppdateringen eller det interna mejlet misslyckas har teamet inget sätt att veta det om felet inte loggas explicit." }
       ]
     },
     map: {
       eyebrow: "Systemkarta",
       title: "En överlämning med kontroller före varje viktig åtgärd",
-      lede: "Arbetsflödet hämtar affären och dess kopplingar, kontrollerar kontaktuppgifterna, söker efter tidigare behandling och kör sedan kundöverlämningen endast på den säkra vägen. Saknade uppgifter och misslyckade åtgärder loggas tydligt.",
+      lede: "Arbetsflödet hämtar affären och dess HubSpot-associationer, validerar kontakt och e-post med två separata routrar, kontrollerar affärens ID i Google Sheets-loggen, skickar sedan välkomstmejlet och loggar varje utfall. Ingenting når kunden om inte alla tre kontroller godkänns.",
       hubTitle: "Order Handoff Automation",
       hubMeta: "1 MAKE.COM-SCENARIO + FELVÄGAR",
       invalidLabel: "saknas, dubblett eller fel → loggas / stoppas",
@@ -354,7 +354,7 @@ window.CASE_CONTENT = {
     workflow: {
       eyebrow: "Sammankopplat arbetsflöde",
       title: "En sammanhängande överlämning i sex kontrollerade steg",
-      lede: "Scenariot går från Closed Won till kund- och internkommunikation, men först efter att affären, kontakten och dubblettstatusen har kontrollerats.",
+      lede: "Varje steg bekräftar antingen att överlämningen kan fortsätta, eller skriver en loggpost som förklarar varför den stoppades. Ingenting når kunden om inte kontaktkontrollen, e-postkontrollen och dubblettkontrollen har godkänts.",
       differentiator: "kontrollpunkt",
       stages: [
         {
@@ -362,9 +362,9 @@ window.CASE_CONTENT = {
           title: "Identifiera och hämta den vunna affären",
           icon: "circle-play",
           steps: [
-            "Bevakar HubSpot efter en affär som går in i fasen Closed Won",
-            "Hämtar affärens uppgifter",
-            "Hämtar affärens kopplingar så att rätt kontakt kan hittas"
+            "Watch CRM Objects identifierar en affär som går in i Closed Won — det är scenariots enda startpunkt",
+            "Get Deal hämtar affärens fullständiga uppgifter — Watch-modulen ensam returnerar inte tillräcklig data",
+            "List Associations hittar det kopplade kontakt-ID:t — affärer och kontakter är separata objekt i HubSpot"
           ]
         },
         {
@@ -373,16 +373,16 @@ window.CASE_CONTENT = {
           icon: "badge-check",
           hot: true,
           steps: [
-            "Kontrollerar om affären har en kopplad kontakt",
-            "Hämtar kontaktuppgifterna",
-            "Kontrollerar om kontakten har en e-postadress",
-            "Loggar Missing Contact, Missing Email eller Contact Fetch Failed i Google Sheets när det behövs"
+            "Router kontrollerar om en kopplad kontakt finns — en Closed Won-affär kan sakna kopplad kontakt",
+            "Get Contact hämtar kontaktuppgifterna med hjälp av associationens ID",
+            "Andra routern kontrollerar om kontakten har en e-postadress — en kontakt kan finnas i HubSpot utan en",
+            "Missing Contact, Missing Email eller Contact Fetch Failed skrivs till Google Sheets om någon kontroll misslyckas"
           ],
           branch: {
             successTitle: "Kontakt redo",
-            successText: "Arbetsflödet kan fortsätta till dubblettkontrollen.",
+            successText: "Båda kontrollerna godkändes. Arbetsflödet fortsätter till dubblettkontrollen.",
             warningTitle: "Kontakt inte redo",
-            warningText: "Orsaken loggas och kundkommunikationen stoppas."
+            warningText: "Orsaken till felet loggas och kundkommunikationen stoppas här."
           }
         },
         {
@@ -391,15 +391,15 @@ window.CASE_CONTENT = {
           icon: "copy-check",
           hot: true,
           steps: [
-            "Söker i Google Sheets efter HubSpot-affärens ID",
-            "Kontrollerar om affären redan har loggats som skickad",
-            "Låter bara en ny och obehandlad affär fortsätta"
+            "Search Rows söker efter HubSpot-affärens ID i Google Sheets-loggen över skickade mejl",
+            "Om affärens ID redan finns där dirigeras scenariot till grenen Already Sent och stoppas",
+            "Endast ett affärs-ID som inte finns i loggen fortsätter till kundmejlet"
           ],
           branch: {
             successTitle: "Ny överlämning",
-            successText: "Kundens välkomstmejl kan skickas.",
+            successText: "Affärens ID hittades inte i loggen. Kundens välkomstmejl kan skickas.",
             warningTitle: "Redan behandlad",
-            warningText: "Dubblettvägen stoppas innan ännu ett kundmejl skickas."
+            warningText: "Affärens ID finns redan i loggen. Inget nytt mejl skickas."
           }
         },
         {
@@ -407,8 +407,8 @@ window.CASE_CONTENT = {
           title: "Skicka kundens välkomstmejl",
           icon: "mail-check",
           steps: [
-            "Skickar kundmejlet genom Brevo",
-            "Loggar Customer Email Failed om åtgärden misslyckas"
+            "Brevo skickar kundens välkomstmejl",
+            "Om Brevo misslyckas skrivs Customer Email Failed till felloggen — de efterföljande stegen körs inte"
           ]
         },
         {
@@ -416,9 +416,9 @@ window.CASE_CONTENT = {
           title: "Uppdatera HubSpot och logga resultatet",
           icon: "refresh-cw",
           steps: [
-            "Uppdaterar HubSpot-affären efter kundkommunikationen",
-            "Loggar HubSpot Update Failed om CRM-uppdateringen misslyckas",
-            "Lägger till en Email Sent-rad i Google Sheets för den slutförda överlämningen"
+            "HubSpot Update Deal markerar affären som överlämnad i CRM-systemet",
+            "Om uppdateringen misslyckas loggas HubSpot Update Failed",
+            "Google Sheets får en Email Sent-rad — det är den post som dubblettkontrollen läser nästa gång"
           ]
         },
         {
@@ -426,8 +426,8 @@ window.CASE_CONTENT = {
           title: "Skicka det interna överlämningsmejlet",
           icon: "users",
           steps: [
-            "Skickar ett internt mejl genom Brevo så att teamet vet att kundöverlämningen är klar",
-            "Loggar Internal Email Failed om den sista aviseringen misslyckas"
+            "Brevo skickar ett internt mejl så att teamet vet att kundöverlämningen är klar",
+            "Om det misslyckas skrivs Internal Email Failed till felloggen"
           ]
         }
       ]
@@ -450,33 +450,33 @@ window.CASE_CONTENT = {
     quality: {
       eyebrow: "Varför överlämningskontroller är viktiga",
       title: "Att en affär är markerad som Closed Won betyder inte att kundöverlämningen är redo.",
-      lede: "Arbetsflödet skiljer en avslutad försäljning från en överlämning som är redo att fortsätta och enkel att följa.",
+      lede: "Arbetsflödet skiljer en avslutad försäljning från en överlämning som är säker att genomföra. Tre kontroller måste godkännas innan något når kunden.",
       flow: ["Closed Won-affär", "Validera & kontrollera dubblett", "Skicka en gång & logga"],
-      incompleteTitle: "Inte redo att skicka",
+      incompleteTitle: "Inte redo att skicka — stoppas här",
       readyTitle: "Redo att fortsätta",
       incomplete: [
-        "Det finns ingen kopplad kontakt",
-        "Kontakten saknar e-postadress",
-        "Samma affärs-ID finns redan i loggen över skickade mejl",
-        "Ett misslyckat mejl eller en CRM-uppdatering skulle vara osynligt utan fellogg"
+        "Ingen kopplad kontakt i HubSpot",
+        "Kontakten finns men saknar e-postadress",
+        "Affärens ID finns redan i loggen över skickade mejl",
+        "Ett misslyckat Brevo-utskick eller en HubSpot-uppdatering är osynlig utan fellogg"
       ],
       ready: [
-        "Den kopplade kontakten hittas",
-        "E-postfältet finns",
-        "Det finns ingen tidigare post för samma affärs-ID i loggen över skickade mejl",
-        "Kundens och teamets åtgärder kan dokumenteras tydligt"
+        "Kopplad kontakt hittad",
+        "Kontakten har en e-postadress",
+        "Affärens ID hittades inte i loggen över skickade mejl",
+        "Kundens och teamets åtgärder loggas tydligt"
       ],
-      clarification: "Dubblettkontrollen bygger på HubSpot-affärens ID i Google Sheets. Det är ett användbart skydd i demonstrationen, men det kan inte garantera att varje möjlig dubblett förhindras i produktion."
+      clarification: "Dubblettkontrollen bygger på HubSpot-affärens ID i Google Sheets. Den förhindrar upprepade utskick i normalt läge, men kan inte täcka varje kantfall i produktion — till exempel om loggskrivningen misslyckas efter att mejlet skickats."
     },
     capabilities: {
       eyebrow: "Grundläggande funktioner",
       title: "Vad systemet faktiskt gör",
       items: [
         { icon: "circle-play", label: "Closed Won-start" },
-        { icon: "database", label: "Hämtar affär och kopplingar" },
-        { icon: "badge-check", label: "Kontrollerar kontakt och e-post" },
-        { icon: "copy-check", label: "Förhindrar dubbletter" },
-        { icon: "mail-check", label: "Skickar kundens välkomstmejl" },
+        { icon: "database", label: "Hämtar affär och associationer" },
+        { icon: "badge-check", label: "Validerar kontakt och e-post" },
+        { icon: "copy-check", label: "Kontrollerar affärs-ID för dubbletter" },
+        { icon: "mail-check", label: "Skickar välkomstmejl via Brevo" },
         { icon: "refresh-cw", label: "Uppdaterar HubSpot-affären" },
         { icon: "clipboard-list", label: "Loggar resultat och fel" },
         { icon: "users", label: "Skickar internt överlämningsmejl" }
@@ -486,16 +486,16 @@ window.CASE_CONTENT = {
       eyebrow: "Teknikstack",
       title: "Fyra verktyg med fyra tydliga ansvarsområden",
       tools: [
-        { label: "HubSpot", icon: "circle-dot", color: "#FF7A59", description: "Ger Closed Won-starten, affärsdata, kontaktkopplingar och den slutliga CRM-uppdateringen." },
-        { label: "Make.com", icon: "workflow", color: "#8B5CF6", description: "Kopplar samman kontroller, routers, åtgärder och felvägar i ett scenario." },
-        { label: "Google Sheets", icon: "table-2", color: "#34A853", description: "Lagrar underlaget för dubblettkontrollen, loggen över skickade mejl och felloggarna i demonstrationen." },
-        { label: "Brevo", icon: "send", color: "#0B996E", description: "Skickar kundens välkomstmejl och det interna överlämningsmejlet." }
+        { label: "HubSpot", icon: "circle-dot", color: "#FF7A59", description: "Ger Closed Won-starten, affärsuppgifter, kontaktassociationer och tar emot den slutliga CRM-uppdateringen." },
+        { label: "Make.com", icon: "workflow", color: "#8B5CF6", description: "Styr routrarna, filtren, åtgärderna och felvägarna i hela scenariot." },
+        { label: "Google Sheets", icon: "table-2", color: "#34A853", description: "Lagrar loggen för dubblettkontrollen och alla fel- och resultatposter." },
+        { label: "Brevo", icon: "send", color: "#0B996E", description: "Skickar kundens välkomstmejl och det interna överlämningsmeddelandet." }
       ]
     },
     states: {
       eyebrow: "Arbetsflödessteg & testning",
       title: "Överlämningen följer en synlig och kontrollerad livscykel",
-      lede: "Detta är förklarande arbetsflödessteg — inte lagrade databasstatusar — som visar var scenariot kan fortsätta, stoppas eller skriva en logg.",
+      lede: "Det här är de steg en affär rör sig igenom — inte lagrade databasstatusar. Varje stoppunkt skriver en logg så att teamet kan se exakt vad som hände.",
       stages: [
         { label: "Closed Won" },
         { label: "affär hämtad" },
@@ -508,57 +508,57 @@ window.CASE_CONTENT = {
       ],
       final: "slutresultat",
       testingTitle: "Teststatus",
-      testingText: "Huvudmodulerna, routinglogiken och dubblettkontrollen testades med demonstrationsposter. Scenariot innehåller felloggarna som visas i skärmbilden och driftsattes inte i en verklig kundmiljö."
+      testingText: "Huvudmodulerna, båda routrarna, dubblettkontrollen och felloggvägarna testades med demonstrationsposter. Scenariot driftsattes inte i en verklig kundmiljö."
     },
     limitations: {
       eyebrow: "Tydliga begränsningar",
       title: "Nuvarande begränsningar",
       items: [
-        "Google Sheets används som en enkel demonstrationslogg och lagring för dubblettkontroll, inte som en transaktionssäker produktionsdatabas.",
-        "Dubblettskyddet är beroende av att posten över skickat mejl sparas korrekt; ett fel mellan utskick och loggning kan fortfarande skapa oklarhet.",
-        "Kontaktkontrollen bekräftar att ett e-postfält finns men verifierar inte att adressen kan levereras eller tillhör personen.",
-        "Felvägarna loggar misslyckanden men försöker inte automatiskt igen och reparerar inte den misslyckade åtgärden.",
-        "Den nuvarande versionen skapar ingen onboardinguppgift och anpassar inte överlämningen efter affärstyp, tjänst eller ansvarig person.",
-        "Arbetsflödet testades inte i en verklig kundmiljö."
+        "Google Sheets används som en enkel logg och lagring för dubblettkontroll, inte som en transaktionssäker produktionsdatabas.",
+        "Om loggskrivningen av Email Sent misslyckas efter att Brevo skickat, fångar inte dubblettkontrollen ett andra utskick — samma affär kan behandlas igen.",
+        "Kontaktkontrollen bekräftar att ett e-postfält finns men verifierar inte att adressen kan levereras eller tillhör rätt person.",
+        "Felvägar loggar misslyckanden men försöker inte automatiskt igen och reparerar inte den misslyckade åtgärden.",
+        "Den nuvarande versionen skapar ingen onboardinguppgift och anpassar inte överlämningsmeddelandet efter affärstyp, tjänst eller ansvarig person.",
+        "Arbetsflödet testades med demonstrationsposter, inte i en verklig kundmiljö."
       ]
     },
     planned: {
       eyebrow: "Nästa steg för projektet",
       title: "Göra överlämningen mer robust och enklare att hantera",
       badge: "PLANERADE FÖRBÄTTRINGAR — INTE IMPLEMENTERADE",
-      description: "Den nuvarande versionen validerar kontaktuppgifter, kontrollerar om affären redan har behandlats, kommunicerar med kunden, uppdaterar HubSpot och loggar resultatet. En framtida version kan stärka återställning, ansvar och övervakning.",
+      description: "Den nuvarande versionen validerar, kontrollerar dubbletter, kommunicerar och loggar. En framtida version kan göra återställning automatisk och ansvarsfördelningen tydligare.",
       items: [
-        "Använd en CRM-egenskap eller strukturerad databas som en säkrare post över behandlade affärer",
-        "Lägg till automatiska återförsök och en felkö för misslyckade API- eller mejlåtgärder",
-        "Meddela ansvarig person när en överlämning misslyckas",
-        "Skapa en onboardinguppgift eller ett ärende efter en lyckad överlämning",
-        "Använd olika mejlmallar och interna vägar beroende på tjänst eller affärstyp",
+        "Använd en HubSpot-affärsegenskap eller strukturerad databas som en säkrare post över behandlade affärer",
+        "Lägg till automatiska återförsök och en felkö för misslyckade Brevo- eller HubSpot-åtgärder",
+        "Meddela affärsansvarig när en överlämning misslyckas, i stället för att bara skriva en logg",
+        "Skapa en onboardinguppgift eller ett ärende automatiskt efter en lyckad överlämning",
+        "Använd olika mejlmallar beroende på tjänstetyp, affärsstorlek eller ansvarigt team",
         "Lägg till övervakning av försenade eller ofullständiga överlämningar",
-        "Granska integritet, åtkomst och datalagring före produktionsanvändning"
+        "Granska integritet, datalagring och åtkomstregler före produktionsanvändning"
       ],
-      goal: "Målet är inte att ta bort mänskligt ansvar, utan att göra varje vunnen affär enklare att lämna över samtidigt som problem förblir synliga för teamet.",
+      goal: "Målet är inte att ta bort mänskligt ansvar från överlämningen. Det är att göra varje vunnen affär spårbar från Closed Won till bekräftad kundkommunikation — med varje misslyckande synligt för teamet.",
       note: "Detta är planerade framtida förbättringar och ingår inte i den nuvarande implementerade versionen."
     },
     learned: {
       eyebrow: "Vad jag lärde mig",
-      quote: "Jag lärde mig att använda HubSpot-kopplingar, routers och filter för att kontrollera förutsättningarna för kundöverlämningen innan något meddelande skickas.",
-      paragraph: "Jag lärde mig också hur ett affärs-ID kan användas för dubblettkontroll, hur resultat- och felvägar skapar ett tydligare revisionsspår och varför kundkommunikation och intern kommunikation bör behandlas som separata åtgärder.",
+      quote: "Jag lärde mig hur HubSpot-associationer fungerar — att affärer och kontakter är separata objekt och att du behöver List Associations och Get Contact som två distinkta steg, inte ett. Jag lärde mig också hur man använder routrar och en affärs-ID-logg för att kontrollera överlämningsvillkoren innan något meddelande lämnar systemet.",
+      paragraph: "Att bygga felvägarna lärde mig något jag inte väntade mig: att logga ett misslyckande är inte samma sak som att hantera det. En logg talar om att något gick fel. En återförsöksväg eller ett ägarmeddelande gör faktiskt något åt det. Det är skillnaden mellan den nuvarande versionen och en produktionsredo version.",
       transparencyTitle: "Projekttransparens",
-      transparency1: "Detta är en funktionell portföljdemonstration som byggdes och testades med demonstrationsposter. Den utvecklades inte för en verklig kundmiljö.",
-      transparency2: "Projektet visar arbetsflödeslogik, validering, dubblettkontroll, CRM-uppdatering, kommunikation och felloggning. Det innehåller inga uppmätta kundresultat."
+      transparency1: "Det här är en funktionell portföljdemonstration som byggdes och testades med demonstrationsposter. Den utvecklades inte för en verklig kundmiljö.",
+      transparency2: "Projektet visar arbetsflödeslogik, CRM-integration, validering, dubblettkontroll, kommunikation och felloggning. Det innehåller inga uppmätta kundresultat."
     },
     related: {
       eyebrow: "Fler fallstudier",
       title: "Relaterade projekt",
       projects: [
         { tag: "Fallstudie 01", title: "Lead Capture Automation", description: "Omvandlar en webbplatsförfrågan till ett validerat och loggat lead med teamnotis och automatiskt bekräftelsesvar.", action: "Visa fallstudien", urlKey: "lead" },
-        { tag: "Fallstudie 03", title: "AI Research Agent", description: "Omvandlar återkommande företagsresearch till en kontrollerad och strukturerad rapport genom tre sammankopplade scenarier.", action: "Utforska projektet", urlKey: "research" }
+        { tag: "Fallstudie 03", title: "AI Research Agent", description: "Omvandlar återkommande företagsresearch till en kvalitetskontrollerad och strukturerad rapport genom tre sammankopplade Make.com-scenarier.", action: "Utforska projektet", urlKey: "research" }
       ]
     },
     cta: {
       eyebrow: "Låt oss prata",
       title: "Söker ni någon som kan kartlägga, bygga och tydligt dokumentera praktiska arbetsflöden?",
-      description: "Jag söker en praktikplats, arbetspraktik eller juniorroll i Malmö eller Skåne där jag kan fortsätta lära mig och samtidigt bidra med praktiskt arbete med automation.",
+      description: "Jag söker en praktikplats, arbetspraktik eller juniorroll i Malmö eller Skåne där jag kan fortsätta lära mig och samtidigt bidra med praktiskt automationsarbete.",
       portfolio: "Tillbaka till portföljen",
       lead: "Visa Lead Capture-fallstudien"
     },
