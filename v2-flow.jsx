@@ -1,5 +1,5 @@
 // v2-flow.jsx
-// Connected Order Handoff stages and real workflow screenshots.
+// Connected Order Handoff stages, real workflow screenshots and project resources.
 
 const { Icon: FlowIcon, Shell: FlowShell, SectionHead: FlowSectionHead } = window;
 
@@ -128,4 +128,201 @@ function EvidenceSection() {
   );
 }
 
-Object.assign(window, { WorkflowSection, EvidenceSection });
+function ResourcesSection() {
+  const { lang } = window.useApp();
+  const isSv = lang === 'sv';
+
+  const copy = isSv
+    ? {
+        eyebrow: 'Projektmaterial',
+        title: 'Plan, demo och dokumentation',
+        lede: 'Här finns planeringsskissen, en videodemonstration av arbetsflödet och den fullständiga projektdokumentationen.',
+        sketchTitle: 'Planeringsskiss',
+        sketchText: 'Order Handoff-flödet visualiserat från Closed Won till validering, dublettkontroll, kundmail, CRM-uppdatering och loggning.',
+        sketchAlt: 'Planeringsskiss för Order Handoff Automation på svenska',
+        demoTitle: 'Se arbetsflödet i praktiken',
+        demoText: 'Videon visar det fungerande Order Handoff-flödet och hur kontroller, utskick och loggning hänger ihop.',
+        loomLink: 'Öppna videon i Loom',
+        docsTitle: 'Projektdokumentation',
+        docsText: 'Dokumentationen beskriver arbetsflödet, testningen, begränsningarna, riskerna och planerade förbättringar. Båda språkversionerna finns tillgängliga.',
+        enDoc: 'Documentation — EN',
+        svDoc: 'Dokumentation — SV',
+      }
+    : {
+        eyebrow: 'Project resources',
+        title: 'Plan, demo and documentation',
+        lede: 'Explore the planning sketch, a video walkthrough of the workflow and the full project documentation.',
+        sketchTitle: 'Workflow planning sketch',
+        sketchText: 'The Order Handoff flow mapped from Closed Won through validation, duplicate prevention, customer email, CRM update and logging.',
+        sketchAlt: 'Order Handoff Automation workflow planning sketch in English',
+        demoTitle: 'Watch the workflow in action',
+        demoText: 'The video shows the working Order Handoff flow and how the checks, communication and logging work together.',
+        loomLink: 'Open video in Loom',
+        docsTitle: 'Project documentation',
+        docsText: 'The documentation covers the workflow logic, testing, limitations, risks and planned improvements. Both language versions are available.',
+        enDoc: 'Documentation — EN',
+        svDoc: 'Dokumentation — SV',
+      };
+
+  const sketchSrc = isSv
+    ? 'assets/order-handoff-workflow-sketch-sv.png'
+    : 'assets/order-handoff-workflow-sketch-en.png';
+
+  const loomUrl = 'https://www.loom.com/share/c05fb9a8d76b417fa4b8e4de071ed787';
+
+  const cardStyle = {
+    borderRadius: '22px',
+    overflow: 'hidden',
+    border: '1px solid rgba(148, 163, 184, 0.16)',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  };
+
+  const bodyStyle = {
+    padding: '22px',
+  };
+
+  const linkStyle = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    minHeight: '46px',
+    padding: '0 18px',
+    borderRadius: '12px',
+    textDecoration: 'none',
+    fontWeight: 700,
+    border: '1px solid rgba(255,255,255,0.2)',
+    color: '#ffffff',
+    background: 'rgba(255,255,255,0.06)',
+  };
+
+  return (
+    <FlowShell tone="navy" grid pad="lg" id="resources">
+      <window.Glow x="12%" y="20%" size={560} opacity={0.10} />
+      <FlowSectionHead eyebrow={copy.eyebrow} title={copy.title} lede={copy.lede} />
+
+      <div
+        className="reveal-up"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 360px), 1fr))',
+          gap: '24px',
+          alignItems: 'stretch',
+        }}
+      >
+        <article className="panel-dark" style={cardStyle}>
+          <div style={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', background: '#f7f3ea' }}>
+            <img
+              src={sketchSrc}
+              alt={copy.sketchAlt}
+              loading="lazy"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+          </div>
+          <div style={{ ...bodyStyle, flex: 1 }}>
+            <h3 style={{ margin: '0 0 8px' }}>{copy.sketchTitle}</h3>
+            <p style={{ margin: 0, opacity: 0.82 }}>{copy.sketchText}</p>
+          </div>
+        </article>
+
+        <article className="panel-dark" style={cardStyle}>
+          <div
+            style={{
+              position: 'relative',
+              width: '100%',
+              aspectRatio: '16 / 9',
+              background: 'linear-gradient(135deg, #120c08 0%, #19110c 55%, #3a1e0d 100%)',
+              overflow: 'hidden',
+            }}
+          >
+            <a
+              href={loomUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={copy.demoTitle}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '12px',
+                padding: '24px',
+                color: '#ffffff',
+                textDecoration: 'none',
+                textAlign: 'center',
+              }}
+            >
+              <span
+                aria-hidden="true"
+                style={{
+                  width: '72px',
+                  height: '72px',
+                  borderRadius: '999px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'rgba(249, 115, 22, 0.95)',
+                  border: '1px solid rgba(255,255,255,0.22)',
+                  boxShadow: '0 12px 36px rgba(0,0,0,0.28)',
+                }}
+              >
+                <FlowIcon name="play" size={30} />
+              </span>
+              <strong style={{ fontSize: '1.05rem' }}>{copy.demoTitle}</strong>
+              <span style={{ opacity: 0.72 }}>Order Handoff Automation · Loom</span>
+            </a>
+          </div>
+          <div style={{ ...bodyStyle, flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <h3 style={{ margin: '0 0 8px' }}>{copy.demoTitle}</h3>
+            <p style={{ margin: '0 0 16px', opacity: 0.82 }}>{copy.demoText}</p>
+            <div style={{ marginTop: 'auto' }}>
+              <a
+                href={loomUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={linkStyle}
+              >
+                <FlowIcon name="external-link" size={16} /> {copy.loomLink}
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <article className="panel-dark reveal-up" style={{ ...cardStyle, marginTop: '24px', height: 'auto' }}>
+        <div style={{ ...bodyStyle, display: 'grid', gap: '16px' }}>
+          <div>
+            <h3 style={{ margin: '0 0 8px' }}>{copy.docsTitle}</h3>
+            <p style={{ margin: 0, opacity: 0.82 }}>{copy.docsText}</p>
+          </div>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+            <a
+              href="assets/Order_Handoff_Automation_Documentation_EN.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={linkStyle}
+            >
+              <FlowIcon name="file-text" size={16} /> {copy.enDoc}
+            </a>
+
+            <a
+              href="assets/Order_Handoff_Automation_Documentation_SV.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={linkStyle}
+            >
+              <FlowIcon name="file-text" size={16} /> {copy.svDoc}
+            </a>
+          </div>
+        </div>
+      </article>
+    </FlowShell>
+  );
+}
+
+Object.assign(window, { WorkflowSection, EvidenceSection, ResourcesSection });
