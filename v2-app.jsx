@@ -55,6 +55,7 @@ function PageContent() {
         <window.SystemMap />
         <window.WorkflowSection />
         <window.EvidenceSection />
+        <window.ResourcesSection />
         <window.QualitySection />
         <window.CapabilitiesSection />
         <window.StackSection />
