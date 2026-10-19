@@ -1,7 +1,7 @@
 // v2-shared.jsx
 // Shared state, URLs and reusable primitives.
 
-const V2_PORTFOLIO_URL = 'https://portfolio-site-9d14e9.webflow.io/';
+const V2_PORTFOLIO_URL = 'https://portfolio-site-9d14e9-34d94a51044ee8e3a.webflow.io/';
 const V2_LEAD_CAPTURE_URL = 'https://minaflow-888.github.io/lead-capture-fixed-preview/';
 const V2_ORDER_HANDOFF_URL = 'https://minaflow-888.github.io/02-order-handoff-automation/';
 const V2_AI_RESEARCH_URL = 'https://minaflow-888.github.io/03-ai-research-agent/';
